@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillConnect | Student Marketplace</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#09090b;color:#fafafa;font-family:Arial,sans-serif}
+header{padding:20px;background:#18181b;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
+.logo{color:#fbbf24;font-size:23px;font-weight:bold}
+button{background:#f59e0b;color:#111;border:0;border-radius:9px;padding:11px 16px;font-weight:bold;cursor:pointer}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px;background:#18181b}
+nav button{background:#27272a;color:white}
+main{padding:20px;max-width:1000px;margin:auto}
+.hero{padding:35px 22px;background:linear-gradient(135deg,#29200b,#18181b);border:1px solid #72521b;border-radius:18px}
+h1{font-size:34px}
+.gold{color:#fbbf24}
+input,select,textarea{width:100%;padding:13px;margin:8px 0;background:#18181b;color:white;border:1px solid #444;border-radius:9px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:15px}
+.card{background:#18181b;padding:18px;border:1px solid #333;border-radius:14px}
+.card h3{color:#fbbf24}
+.muted{color:#aaa;font-size:14px}
+section{margin-top:28px}
+.hidden{display:none}
+footer{text-align:center;padding:30px;color:#aaa}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">✦ SkillConnect</div>
+<button onclick="show('profile')">My Profile</button>
+</header>
+
+<nav>
+<button onclick="show('home')">Home</button>
+<button onclick="show('explore')">Explore</button>
+<button onclick="show('offer')">Offer Skill</button>
+<button onclick="show('requests')">Requests</button>
+<button onclick="show('rewards')">Rewards</button>
+</nav>
+
+<main>
+<div id="home">
+<div class="hero">
+<p class="gold">STUDENT SKILL COMMUNITY</p>
+<h1>Share skills.<br>Build your future.</h1>
+<p>Discover talent, learn together and grow through collaboration.</p>
+<button onclick="show('explore')">Explore Skills →</button>
+<button onclick="show('offer')">Offer Your Skill</button>
+</div>
+<section>
+<h2>Why SkillConnect?</h2>
+<div class="grid">
+<div class="card"><h3>🚀 Discover</h3><p>Explore student talents and skills.</p></div>
+<div class="card"><h3>🤝 Collaborate</h3><p>Work together on creative projects.</p></div>
+<div class="card"><h3>🏆 Achieve</h3><p>Earn points and school recognition.</p></div>
+</div>
+</section>
+</div>
+
+<div id="explore" class="hidden">
+<h1>Explore Skills</h1>
+<input id="search" placeholder="Search skills..." oninput="renderSkills()">
+<select id="category" onchange="renderSkills()">
+<option value="All">All Categories</option>
+<option>Design</option><option>Coding</option>
+<option>Editing</option><option>Tutoring</option>
+<option>Photography</option><option>Music</option>
+</select>
+<div class="grid" id="skills"></div>
+</div>
+
+<div id="offer" class="hidden">
+<h1>Offer Your Skill</h1>
+<div class="card">
+<input id="skillName" placeholder="Skill name">
+<select id="skillCategory">
+<option>Design</option><option>Coding</option>
+<option>Editing</option><option>Tutoring</option>
+<option>Photography</option><option>Music</option>
+</select>
+<select id="level">
+<option>Beginner</option><option>Intermediate</option><option>Advanced</option>
+</select>
+<textarea id="description" placeholder="Describe what you can offer"></textarea>
+<button onclick="addSkill()">Submit Skill</button>
+<p class="muted">Submissions are demonstrations and require school approval before becoming public.</p>
+</div>
+</div>
+
+<div id="requests" class="hidden">
+<h1>Project Requests</h1>
+<div id="requestList" class="card">No requests yet. Explore skills to try a demo request.</div>
+</div>
+
+<div id="rewards" class="hidden">
+<h1>Rewards Centre 🏆</h1>
+<div class="grid">
+<div class="card"><h2 class="gold" id="points">0</h2><p>Demo points</p></div>
+<div class="card"><h2 class="gold">🥉 Bronze</h2><p>Starter badge</p></div>
+</div>
+<p class="muted">Demo points are stored on this device only. Real rewards require school approval.</p>
+</div>
+
+<div id="profile" class="hidden">
+<h1>Student Profile</h1>
+<div class="card">
+<h2>My SkillConnect Profile</h2>
+<input placeholder="Display name (avoid personal contact details)">
+<p>Member of the SkillConnect community</p>
+<p class="muted">Keep your personal information private.</p>
+</div>
+</div>
+</main>
+
+<footer>✦ SkillConnect | Share Skills • Learn Together<br><br>School-approved student collaboration</footer>
+
+<script>
+let skills=[
+{name:"Poster Design",category:"Design",level:"Intermediate",desc:"Creative posters and invitations"},
+{name:"Web Development",category:"Coding",level:"Beginner",desc:"Basic website projects"},
+{name:"Video Editing",category:"Editing",level:"Advanced",desc:"Creative video editing"},
+{name:"Peer Tutoring",category:"Tutoring",level:"Intermediate",desc:"Learn subjects together"},
+{name:"Photography",category:"Photography",level:"Beginner",desc:"Creative photography"},
+{name:"Music",category:"Music",level:"Intermediate",desc:"Music and singing"}
+];
+let requests=[];
+let points=0;
+function show(id){
+document.querySelectorAll("main>div").forEach(x=>x.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+if(id==="explore")renderSkills();
+if(id==="requests")renderRequests();
+}
+function renderSkills(){
+let q=document.getElementById("search").value.toLowerCase();
+let c=document.getElementById("category").value;
+let filtered=skills.filter(s=>(s.name.toLowerCase().includes(q)||s.desc.toLowerCase().includes(q))&&(c==="All"||s.category===c));
+document.getElementById("skills").innerHTML=filtered.map((s,i)=>`
+<div class="card"><h3>${s.name}</h3><p>${s.desc}</p>
+<p class="muted">${s.category} • ${s.level}</p>
+<button onclick="requestSkill('${s.name.replace(/'/g,"")}')">Request collaboration</button></div>`).join("")||"<p>No skills found.</p>";
+}
+function addSkill(){
+let name=document.getElementById("skillName").value.trim();
+let desc=document.getElementById("description").value.trim();
+if(!name||!desc){alert("Please enter a skill name and description.");return;}
+skills.push({name,desc,category:document.getElementById("skillCategory").value,level:document.getElementById("level").value});
+alert("Demo skill submitted! It is not public until school approval.");
+document.getElementById("skillName").value="";
+document.getElementById("description").value="";
+show("explore");
+}
+function requestSkill(name){
+requests.push(name);
+points+=10;
+document.getElementById("points").textContent=points;
+alert("Demo request created! 10 demo points added. Real requests need school approval.");
+}
+function renderRequests(){
+document.getElementById("requestList").innerHTML=requests.length?requests.map(x=>`<p>📌 ${x} — Demo request pending approval</p>`).join(""):"No requests yet. Explore skills to try a demo request.";
+}
+renderSkills();
+</script>
+</body>
+  </html>
+  
